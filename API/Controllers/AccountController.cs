@@ -24,9 +24,10 @@ namespace API.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<ActionResult<AppUser>> Register(string username, string password)
+        
+        public async Task<ActionResult<AppUser>> Register(RegisterDto register)
         {
-            if (await UserExists(username))
+            if (await UserExists(register.Username))
             {
                 return BadRequest("Username is taken");
             }
@@ -34,8 +35,8 @@ namespace API.Controllers
             using var hmac = new HMACSHA512(); //provide us with Hashing algorithm to create a password hash
             var user = new AppUser
             {
-                UserName = username.ToLower(),
-                PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password)),
+                UserName = register.Username.ToLower(),
+                PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(register.Password)),
                 PasswordSalt = hmac.Key
             };
 
